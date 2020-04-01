@@ -83,10 +83,6 @@ def fillChart (n, n2, a22_2, a22_3, a24_2):
 for n2 in range(0, int(n / 2) + 1):
     n4 = n - 2 * n2 - 1
 
-    #if (not (n2 / n4).is_integer()) and (n2 % 2 == 1):        # If not an int, n2-2a22(2)-1=0, so a22(2)=(n2-1)/2
-    #    a22_2 = int((n2-1) / 2)
-    #    a22_3 = n2 - a22_2
-
     for a22_2 in range(0, n2 - 1 + 1):
         a23_2 = a22_2
         a24_2 = n2 - a23_2 - a22_2 - 1

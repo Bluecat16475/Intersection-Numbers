@@ -30,7 +30,9 @@ table.append_row([table3])
 #############################################################
 
 def fillChart (n, n2, a22_2, a22_3, a24_2):
-    if (n2 >= a22_3 + a22_2) and (n - 4 * n2 + 3 * a22_2 + a22_3) >= 0:  # Since a24(3) = n2-a22(3)-a22(2) >= 0
+
+    # Since a24(3) = n2-a22(3)-a22(2) >= 0 and a44(2) >= 0
+    if (n2 >= a22_3 + a22_2) and (n - 4 * n2 + 3 * a22_2 + a22_3) >= 0:
         a24_3 = n2 - a22_3 - a22_2
         a22_4 = int(n2 / n4) * (n2 - a22_2 - a22_3)  # assign a22(4)
         a23_4 = int(n2 / n4) * (n2 - 2 * a22_2 - 1)  # assign a23(4)
@@ -78,7 +80,7 @@ def fillChart (n, n2, a22_2, a22_3, a24_2):
 
 # Divide by zero error with n=25
 
-for n2 in range(0, int(n / 2) + 1):
+for n2 in range(0, int((n - 1) / 2) + 1):             # n=n4+2n2+1 -> 2n2<=n-1
     n4 = n - 2 * n2 - 1
 
     if n4 != 0 and not (n2 / n4).is_integer():        # If not an int, n2-2a22(2)-1=0, so a22(2)=(n2-1)/2
