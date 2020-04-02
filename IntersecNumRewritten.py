@@ -3,6 +3,7 @@ from array import array
 from beautifultable import BeautifulTable
 
 n = int(input("Order: "))
+count = 0
 
 # First subtable
 table2 = BeautifulTable()
@@ -35,7 +36,6 @@ def fillChart (n, n2, a22_2, a22_3, a24_2):
     if (n2 >= a22_3 + a22_2) and (n - 4 * n2 + 3 * a22_2 + a22_3) >= 0:
         a24_3 = n2 - a22_3 - a22_2
 
-        # might need to set these to 0 if n4 == 0
         a22_4 = int(n2 / n4) * (n2 - a22_2 - a22_3)  # assign a22(4)
         a23_4 = int(n2 / n4) * (n2 - 2 * a22_2 - 1)  # assign a23(4)
         a24_4 = n2 - a23_4 - a22_4
@@ -73,11 +73,6 @@ def fillChart (n, n2, a22_2, a22_3, a24_2):
 
 
 
-
-
-
-
-
 ########################
 
 # Divide by zero error with n=25
@@ -85,7 +80,6 @@ def fillChart (n, n2, a22_2, a22_3, a24_2):
 for n2 in range(1, int((n - 1) / 2) + 1):             # n=n4+2n2+1 -> 2n2<=n-1
     n4 = n - 2 * n2 - 1
 
-    # might need tweaking for the case when n4 == 0 (can't just ignore this case)
     if n4 != 0 and not (n2 / n4).is_integer():        # If not an int, n2-2a22(2)-1=0, so a22(2)=(n2-1)/2
         if n2 % 2 == 1:
             a22_2 = int((n2-1) / 2)
