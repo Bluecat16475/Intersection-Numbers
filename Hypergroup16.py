@@ -2,7 +2,6 @@ from array import array
 
 from beautifultable import BeautifulTable
 
-n = int(input("Order: "))
 count = 0
 
 # First subtable
@@ -39,9 +38,8 @@ def fillChart (n, n2, a22_2, a22_3, a24_2):
         a22_4 = int(n2 / n4) * (n2 - a22_2 - a22_3)  # assign a22(4)
         a23_4 = int(n2 / n4) * (n2 - 2 * a22_2 - 1)  # assign a23(4)
         a24_4 = n2 - a23_4 - a22_4
-        a44_2 = n - 4 * n2 + 3 * a22_2 + a22_3
 
-        if n4 - 2 * a24_4 - 1 >= 0:
+        if n4 - 2 * a24_4 - 1 >= 0 and a24_4 == (n4-1) / 2:  # second check from a44_4 = 0 = n4-2a24_4-1
             table.column_headers = [f"n: {n}, n2: {n2}, a22(2): {a22_2}, a22_3: {a22_3}"]
 
             table2[1][1] = a22_2  # a22(2)
@@ -66,8 +64,8 @@ def fillChart (n, n2, a22_2, a22_3, a24_2):
             table3[3][3] = a24_4  # a34(4)
 
             table3[0][5] = n4  # a44(1)
-            table3[1][5] = a44_2  # a44(2)
-            table3[2][5] = a44_2  # a44(3)
+            table3[1][5] = n - 4 * n2 + 3 * a22_2 + a22_3  # a44(2)
+            table3[2][5] = n - 4 * n2 + 3 * a22_2 + a22_3  # a44(3)
             table3[3][5] = n4 - 2 * a24_4 - 1  # a44(4)
 
             print(table)
@@ -76,20 +74,26 @@ def fillChart (n, n2, a22_2, a22_3, a24_2):
 
 ########################
 
+# In this hypergroup, a22(3), a44(4) = 0
+# Thus a24(4) = n/2-n2-2
 
-for n2 in range(1, int((n - 1) / 2) + 1):             # n=n4+2n2+1 -> 2n2<=n-1
-    n4 = n - 2 * n2 - 1
+# n = int(input("Order: "))
 
-    if n4 > 0:
-        if not (n2 / n4).is_integer():        # If not an int, n2-2a22(2)-1=0, so a22(2)=(n2-1)/2
-            if n2 % 2 == 1:
-                a22_2 = int((n2-1) / 2)
-                a22_3 = n2 - a22_2
-                a24_2 = n2 - (2 * a22_2) - 1                          # should be 0
-                fillChart(n, n2, a22_2, a22_3, a24_2)
-        else:
+for n in range(1, 501):
+    for n2 in range(1, int((n - 1) / 2) + 1):             # n=n4+2n2+1 -> 2n2<=n-1
+        n4 = n - 2 * n2 - 1
+
+        if n4 != 0 and not (n2 / n4).is_integer():        # If not an int, n2-2a22(2)-1=0, so a22(2)=(n2-1)/2
+            if n2 % 2 == 1:                               # Also n2-a22(2)-a22(3)=0, so a22(3)=n2-a22(2), so a22(2)=n2 too
+                continue
+                # a22_2 = int((n2-1) / 2)                   # This only intersects when a22(2)=-1, which isn't possible
+                # a22_3 = n2 - a22_2
+                # a24_2 = n2 - (2 * a22_2) - 1                          # should be 0
+                # fillChart(n, n2, a22_2, a22_3, a24_2)
+        elif n4 != 0 and (n4-1) % 2 == 0:
             for a22_2 in range(0, n2 - 1 + 1):
                 a24_2 = n2 - (2 * a22_2) - 1
                 if a24_2 >= 0:
-                    for a22_3 in range(0, n2 - a22_2 + 1):
-                        fillChart(n, n2, a22_2, a22_3, a24_2)
+                    a22_3 = 0
+                    fillChart(n, n2, a22_2, a22_3, a24_2)
+
