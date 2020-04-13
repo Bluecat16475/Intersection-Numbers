@@ -40,8 +40,9 @@ def fillChart (n, n2, a22_2, a22_3, a24_2):
         a23_4 = int(n2 / n4) * (n2 - 2 * a22_2 - 1)  # assign a23(4)
         a24_4 = n2 - a23_4 - a22_4
         a44_2 = n - 4 * n2 + 3 * a22_2 + a22_3
+        a44_4 = n4 - 2 * a24_4 - 1
 
-        if n4 - 2 * a24_4 - 1 >= 0:
+        if a44_4 >= 0:
             table.column_headers = [f"n: {n}, n2: {n2}, a22(2): {a22_2}, a22_3: {a22_3}"]
 
             table2[1][1] = a22_2  # a22(2)
@@ -68,7 +69,7 @@ def fillChart (n, n2, a22_2, a22_3, a24_2):
             table3[0][5] = n4  # a44(1)
             table3[1][5] = a44_2  # a44(2)
             table3[2][5] = a44_2  # a44(3)
-            table3[3][5] = n4 - 2 * a24_4 - 1  # a44(4)
+            table3[3][5] = a44_4  # a44(4)
 
             print(table)
 
