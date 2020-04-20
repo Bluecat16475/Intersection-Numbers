@@ -32,7 +32,7 @@ table.append_row([table3])
 def fillChart (n, n2, a22_2, a22_3, a24_2):
 
     # Since a24(3) = n2-a22(3)-a22(2) > 0 and a44(2) > 0
-    if (n2 > a22_2):
+    if n2 > a22_2:
         a24_3 = n2 - a22_2
 
         a22_4 = int(n2 / n4) * (n2 - a22_2)  # assign a22(4)
@@ -42,6 +42,7 @@ def fillChart (n, n2, a22_2, a22_3, a24_2):
         a44_4 = n4 - 2 * a24_4 - 1
 
         if a22_4 > 0 and a23_4 > 0 and a24_4 > 0 and a44_2 > 0 and a44_4 > 0:
+        # if a22_1 * a13_2 + a22_2 * a23_2 + a22_3 * a33_2 + a22_4 * a43_2 == a23_1 * a21_2 + a23_2 * a22_2 + a23_3 * a23_2 + a23_4 * a24(2):
             table.column_headers = [f"n: {n}, n2: {n2}, a22(2): {a22_2}, a22_3: {a22_3}"]
 
             table2[1][1] = a22_2  # a22(2)
@@ -99,3 +100,6 @@ for n2 in range(1, int((n - 1) / 2) + 1):             # n=n4+2n2+1 -> 2n2<=n-1
 #         a22_3 = n2 - a22_2
 #         a24_2 = n2 - (2 * a22_2) - 1  # should be 0, which means this branch isn't possible
 #         fillChart(n, n2, a22_2, a22_3, a24_2)
+
+# a22_1 * a13_2 + a22_2 * a23_2 + a22_3 * a33_2 + a22_4 * a43_2 == a23_1 * a21_2 + a23_2 * a22_2 + a23_3 * a23_2 + a23_4 * a24(2)
+# a22_2 * a22_2 + a22_4 * a24_3 == n2 + a22_2 * a22_2 + a22_2 * a22_2 + a23_4 * a24_2:
