@@ -35,11 +35,11 @@ def fillChart (n, n2, a22_2, a22_3, a24_2):
     if (n2 >= a22_3 + a22_2) and (n - 4 * n2 + 3 * a22_2 + a22_3) >= 0:
         a24_3 = n2 - a22_3 - a22_2
 
-        a22_4 = int(n2 / n4) * (n2 - a22_2 - a22_3)  # assign a22(4)
-        a23_4 = int(n2 / n4) * (n2 - 2 * a22_2 - 1)  # assign a23(4)
+        a22_4 = (n2 / n4) * (n2 - a22_2 - a22_3)  # assign a22(4)
+        a23_4 = (n2 / n4) * (n2 - 2 * a22_2 - 1)  # assign a23(4)
         a24_4 = n2 - a23_4 - a22_4
 
-        if n4 - 2 * a24_4 - 1 >= 0 and a24_4 == (n4-1) / 2:  # second check from a44_4 = 0 = n4-2a24_4-1
+        if n4 - 2 * a24_4 - 1 >= 0 and a24_4 == (n4-1) / 2 and a24_3 > 0 and a22_4 > 0 and a23_4 > 0 and a24_4 > 0:  # second check from a44_4 = 0 = n4-2a24_4-1
             table.column_headers = [f"n: {n}, n2: {n2}, a22(2): {a22_2}, a22_3: {a22_3}"]
 
             table2[1][1] = a22_2  # a22(2)
@@ -93,7 +93,7 @@ for n in range(1, 501):
         elif n4 != 0 and (n4-1) % 2 == 0:
             for a22_2 in range(0, n2 - 1 + 1):
                 a24_2 = n2 - (2 * a22_2) - 1
-                if a24_2 >= 0:
+                if a24_2 > 0:
                     a22_3 = 0
                     fillChart(n, n2, a22_2, a22_3, a24_2)
 

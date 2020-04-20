@@ -41,8 +41,8 @@ def fillChart (n, n2, a22_2, a22_3, a24_2):
         a44_2 = n - 4 * n2 + 3 * a22_2 + a22_3
         a44_4 = n4 - 2 * a24_4 - 1
 
-        if a22_4 > 0 and a23_4 > 0 and a24_4 > 0 and a44_2 > 0 and a44_4 > 0 and a22_4.is_integer() and a23_4.is_integer():
-        # if a22_1 * a13_2 + a22_2 * a23_2 + a22_3 * a33_2 + a22_4 * a43_2 == a23_1 * a21_2 + a23_2 * a22_2 + a23_3 * a23_2 + a23_4 * a24(2):
+        if a22_4 > 0 and a23_4 > 0 and a24_4 > 0 and a44_2 > 0 and a44_4 > 0 and a22_4.is_integer() and a23_4.is_integer()\
+                and a22_2 * a22_2 + a22_4 * a24_3 == n2 + a22_2 * a22_2 + a22_2 * a22_2 + a23_4 * a24_2:
             table.column_headers = [f"n: {n}, n2: {n2}, a22(2): {a22_2}, a22_3: {a22_3}"]
 
             table2[1][1] = a22_2  # a22(2)
@@ -80,18 +80,18 @@ def fillChart (n, n2, a22_2, a22_3, a24_2):
 # In this hypergroup, a22(3) = 0
 # Thus a24(4) = n/2-n2-2
 
-n = int(input("Order: "))
+# n = int(input("Order: "))
 
-# for n in range (1, 201):
-for n2 in range(1, int((n - 1) / 2) + 1):             # n=n4+2n2+1 -> 2n2<=n-1
-    n4 = n - 2 * n2 - 1
+for n in range (1, 501):
+    for n2 in range(1, int((n - 1) / 2) + 1):             # n=n4+2n2+1 -> 2n2<=n-1
+        n4 = n - 2 * n2 - 1
 
-    if n4 > 0:
-        for a22_2 in range(1, n2 - 1 + 1):
-            a24_2 = n2 - (2 * a22_2) - 1
-            if a24_2 > 0:
-                a22_3 = 0
-                fillChart(n, n2, a22_2, a22_3, a24_2)
+        if n4 > 0:
+            for a22_2 in range(1, n2 - 1 + 1):
+                a24_2 = n2 - (2 * a22_2) - 1
+                if a24_2 > 0:
+                    a22_3 = 0
+                    fillChart(n, n2, a22_2, a22_3, a24_2)
 
 # if not (n2 / n4).is_integer():  # If not an int, n2-2a22(2)-1=0, so a22(2)=(n2-1)/2
 #     continue
