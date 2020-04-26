@@ -1,8 +1,8 @@
 from array import array
+import math
 
 from beautifultable import BeautifulTable
 
-count = 0
 
 # First subtable
 table2 = BeautifulTable()
@@ -29,17 +29,62 @@ table.append_row([table3])
 
 #############################################################
 
+def eigenvalue_checks (n, k, a, c):
+    d = (a - c) ** 2 + 4 * (k - c)
+
+    # Must have real eigenvalues
+    if d < 0:
+        return False
+
+    theta = (a - c + math.sqrt(d)) / 2
+    tau = (a - c - math.sqrt(d)) / 2
+
+    m_theta = -1 * ((n - 1) * tau + k) / (theta - tau)
+    m_tau = ((n - 1) * theta + k) / (theta - tau)
+
+    # Multiplicities must be integral
+    if not m_theta.is_integer() or not m_tau.is_integer():
+        return False
+
+    # See wikipedia page on SRGs, Godsil Lemma 10.3.2 and pg 222
+    if 2 * k + (n - 1) * (a - c) != 0:
+        if not theta.is_integer() or not tau.is_integer() or m_theta == m_tau:
+            return False
+    elif m_theta != m_tau or k != (n - 1) / 2 or a != (n - 5) / 4 or c != (n - 1) / 4:
+        return False
+
+    # Godsil Lemma 10.3.1
+    if m_theta * m_tau != (n * k * (n - k - 1)) / (theta - tau) ** 2:
+        return False
+
+    # Krein Bounds
+    if theta * (tau ** 2) - 2 * (theta ** 2) * tau - theta ** 2 - k * theta + k * (tau ** 2) + 2 * k * tau < 0 or\
+            (theta ** 2) * tau - 2 * theta * (tau ** 2) - tau ** 2 - k * tau + k * (theta ** 2) + 2 * k * theta < 0:
+        return False
+    elif theta * (tau ** 2) - 2 * (theta ** 2) * tau - theta ** 2 - k * theta + k * (tau ** 2) + 2 * k * tau == 0:
+        if k < m_theta:
+            return False
+    elif (theta ** 2) * tau - 2 * theta * (tau ** 2) - tau ** 2 - k * tau + k * (theta ** 2) + 2 * k * theta == 0:
+        if k < m_tau:
+            return False
+
+    return True
+
 def fillChart (n, n2, a22_2, a22_3, a24_2):
 
-    # Since a24(3) = n2-a22(3)-a22(2) >= 0 and a44(2) >= 0
-    if (n2 >= a22_3 + a22_2) and (n - 4 * n2 + 3 * a22_2 + a22_3) >= 0:
-        a24_3 = n2 - a22_3 - a22_2
+    # Since a24(3) = n2-a22(3)-a22(2) > 0 and a44(2) > 0
+    if n2 > a22_2:
+        a24_3 = n2 - a22_2
 
-        a22_4 = (n2 / n4) * (n2 - a22_2 - a22_3)  # assign a22(4)
+        a22_4 = (n2 / n4) * (n2 - a22_2)  # assign a22(4)
         a23_4 = (n2 / n4) * (n2 - 2 * a22_2 - 1)  # assign a23(4)
         a24_4 = n2 - a23_4 - a22_4
+        a44_2 = n - 4 * n2 + 3 * a22_2 + a22_3
+        a44_4 = 0
 
-        if n4 - 2 * a24_4 - 1 >= 0 and a24_4 == (n4-1) / 2 and a24_3 > 0 and a22_4 > 0 and a23_4 > 0 and a24_4 > 0:  # second check from a44_4 = 0 = n4-2a24_4-1
+        # n4 == 2*a24(4)+1 follows from a44(4)=0
+        if a22_4 > 0 and a23_4 > 0 and a24_4 > 0 and a44_2 > 0 and (n4 == 2*a24_4 + 1) and a22_4.is_integer() and a23_4.is_integer()\
+                and a22_2 * a22_2 + a22_4 * a24_3 == n2 + a22_2 * a22_2 + a22_2 * a22_2 + a23_4 * a24_2 and eigenvalue_checks(n, n4, a44_4, a44_2):
             table.column_headers = [f"n: {n}, n2: {n2}, a22(2): {a22_2}, a22_3: {a22_3}"]
 
             table2[1][1] = a22_2  # a22(2)
@@ -64,9 +109,9 @@ def fillChart (n, n2, a22_2, a22_3, a24_2):
             table3[3][3] = a24_4  # a34(4)
 
             table3[0][5] = n4  # a44(1)
-            table3[1][5] = n - 4 * n2 + 3 * a22_2 + a22_3  # a44(2)
-            table3[2][5] = n - 4 * n2 + 3 * a22_2 + a22_3  # a44(3)
-            table3[3][5] = n4 - 2 * a24_4 - 1  # a44(4)
+            table3[1][5] = a44_2  # a44(2)
+            table3[2][5] = a44_2  # a44(3)
+            table3[3][5] = a44_4  # a44(4)
 
             print(table)
 
@@ -74,26 +119,29 @@ def fillChart (n, n2, a22_2, a22_3, a24_2):
 
 ########################
 
-# In this hypergroup, a22(3), a44(4) = 0
+# In this hypergroup, a22(3) = 0
 # Thus a24(4) = n/2-n2-2
 
 # n = int(input("Order: "))
 
-for n in range(1, 501):
+for n in range (1, 501):
     for n2 in range(1, int((n - 1) / 2) + 1):             # n=n4+2n2+1 -> 2n2<=n-1
         n4 = n - 2 * n2 - 1
 
-        if n4 != 0 and not (n2 / n4).is_integer():        # If not an int, n2-2a22(2)-1=0, so a22(2)=(n2-1)/2
-            if n2 % 2 == 1:                               # Also n2-a22(2)-a22(3)=0, so a22(3)=n2-a22(2), so a22(2)=n2 too
-                continue
-                # a22_2 = int((n2-1) / 2)                   # This only intersects when a22(2)=-1, which isn't possible
-                # a22_3 = n2 - a22_2
-                # a24_2 = n2 - (2 * a22_2) - 1                          # should be 0
-                # fillChart(n, n2, a22_2, a22_3, a24_2)
-        elif n4 != 0 and (n4-1) % 2 == 0:
-            for a22_2 in range(0, n2 - 1 + 1):
+        if n4 > 0:
+            for a22_2 in range(1, n2 - 1 + 1):
                 a24_2 = n2 - (2 * a22_2) - 1
                 if a24_2 > 0:
                     a22_3 = 0
                     fillChart(n, n2, a22_2, a22_3, a24_2)
 
+# if not (n2 / n4).is_integer():  # If not an int, n2-2a22(2)-1=0, so a22(2)=(n2-1)/2
+#     continue
+#     if n2 % 2 == 1:
+#         a22_2 = int((n2 - 1) / 2)
+#         a22_3 = n2 - a22_2
+#         a24_2 = n2 - (2 * a22_2) - 1  # should be 0, which means this branch isn't possible
+#         fillChart(n, n2, a22_2, a22_3, a24_2)
+
+# a22_1 * a13_2 + a22_2 * a23_2 + a22_3 * a33_2 + a22_4 * a43_2 == a23_1 * a21_2 + a23_2 * a22_2 + a23_3 * a23_2 + a23_4 * a24(2)
+# a22_2 * a22_2 + a22_4 * a24_3 == n2 + a22_2 * a22_2 + a22_2 * a22_2 + a23_4 * a24_2:

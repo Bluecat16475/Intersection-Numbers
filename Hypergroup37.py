@@ -1,9 +1,9 @@
 from array import array
+import math
 
 from beautifultable import BeautifulTable
 
-n = int(input("Order: "))
-count = 0
+
 
 # First subtable
 table2 = BeautifulTable()
@@ -30,6 +30,47 @@ table.append_row([table3])
 
 #############################################################
 
+def eigenvalue_checks (n, k, a, c):
+    d = (a - c) ** 2 + 4 * (k - c)
+
+    # Must have real eigenvalues
+    if d < 0:
+        return False
+
+    theta = (a - c + math.sqrt(d)) / 2
+    tau = (a - c - math.sqrt(d)) / 2
+
+    m_theta = -1 * ((n - 1) * tau + k) / (theta - tau)
+    m_tau = ((n - 1) * theta + k) / (theta - tau)
+
+    # Multiplicities must be integral
+    if not m_theta.is_integer() or not m_tau.is_integer():
+        return False
+
+    # See wikipedia page on SRGs, Godsil Lemma 10.3.2 and pg 222
+    if 2 * k + (n - 1) * (a - c) != 0:
+        if not theta.is_integer() or not tau.is_integer() or m_theta == m_tau:
+            return False
+    elif m_theta != m_tau or k != (n - 1) / 2 or a != (n - 5) / 4 or c != (n - 1) / 4:
+        return False
+
+    # Godsil Lemma 10.3.1
+    if m_theta * m_tau != (n * k * (n - k - 1)) / (theta - tau) ** 2:
+        return False
+
+    # Krein Bounds
+    if theta * (tau ** 2) - 2 * (theta ** 2) * tau - theta ** 2 - k * theta + k * (tau ** 2) + 2 * k * tau < 0 or\
+            (theta ** 2) * tau - 2 * theta * (tau ** 2) - tau ** 2 - k * tau + k * (theta ** 2) + 2 * k * theta < 0:
+        return False
+    elif theta * (tau ** 2) - 2 * (theta ** 2) * tau - theta ** 2 - k * theta + k * (tau ** 2) + 2 * k * tau == 0:
+        if k < m_theta:
+            return False
+    elif (theta ** 2) * tau - 2 * theta * (tau ** 2) - tau ** 2 - k * tau + k * (theta ** 2) + 2 * k * theta == 0:
+        if k < m_tau:
+            return False
+
+    return True
+
 def fillChart (n, n2, a22_2, a22_3, a24_2):
 
     # Since a24(3) = n2-a22(3)-a22(2) >= 0
@@ -42,7 +83,8 @@ def fillChart (n, n2, a22_2, a22_3, a24_2):
         a44_2 = n - 4 * n2 + 3 * a22_2 + a22_3
         a44_4 = n4 - 2 * a24_4 - 1
 
-        if a24_3 > 0 and a22_4 > 0 and a23_4 > 0 and a24_4 > 0 and a44_2 > 0 and a44_4 > 0 and a22_4.is_integer() and a23_4.is_integer():
+        if a24_3 > 0 and a22_4 > 0 and a23_4 > 0 and a24_4 > 0 and a44_2 > 0 and a44_4 > 0 and a22_4.is_integer() and a23_4.is_integer()\
+                and a22_3 * a22_3 + a22_4 * a24_3 == n2 + a22_2 * a22_2 + a23_4 * a24_2 and eigenvalue_checks(n, n4, a44_4, a44_2):
             table.column_headers = [f"n: {n}, n2: {n2}, a22(2): {a22_2}, a22_3: {a22_3}"]
 
             table2[1][1] = a22_2  # a22(2)
@@ -77,13 +119,15 @@ def fillChart (n, n2, a22_2, a22_3, a24_2):
 
 ########################
 
+# n = int(input("Order: "))
 
-for n2 in range(1, int((n - 1) / 2) + 1):             # n=n4+2n2+1 -> 2n2<=n-1
-    n4 = n - 2 * n2 - 1
+for n in range(1,501):
+    for n2 in range(1, int((n - 1) / 2) + 1):             # n=n4+2n2+1 -> 2n2<=n-1
+        n4 = n - 2 * n2 - 1
 
-    if n4 > 0:
-        for a22_2 in range(1, n2 - 1 + 1):
-            a24_2 = n2 - (2 * a22_2) - 1
-            if a24_2 > 0:
-                for a22_3 in range(1, n2 - a22_2 + 1):
-                    fillChart(n, n2, a22_2, a22_3, a24_2)
+        if n4 > 0:
+            for a22_2 in range(1, n2 - 1 + 1):
+                a24_2 = n2 - (2 * a22_2) - 1
+                if a24_2 > 0:
+                    for a22_3 in range(1, n2 - a22_2 + 1):
+                        fillChart(n, n2, a22_2, a22_3, a24_2)
