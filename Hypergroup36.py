@@ -56,7 +56,18 @@ def eigenvalue_checks (n, k, a, c):
     if m_theta * m_tau != (n * k * (n - k - 1)) / (theta - tau) ** 2:
         return False
 
-    # Krein Bounds
+    # Super Krein Bounds
+    if (m_theta ** 2 / n) * (1 + theta ** 3 / k ** 2 - (theta + 1) ** 3 / (n - k - 1) ** 2) < 0 or \
+            (m_tau ** 2 / n) * (1 + tau ** 3 / k ** 2 - (tau + 1) ** 3 / (n - k - 1) ** 2) < 0:
+        return False
+    elif (m_theta ** 2 / n) * (1 + theta ** 3 / k ** 2 - (theta + 1) ** 3 / (n - k - 1) ** 2) == 0:
+        if n > .5 * m_theta * (m_theta + 3):
+            return False
+    elif (m_theta ** 2 / n) * (1 + theta ** 3 / k ** 2 - (theta + 1) ** 3 / (n - k - 1) ** 2) > 0:
+        if n > .5 * m_theta * (m_theta + 1):
+            return False
+
+    # Regular Krein Bounds (possibly redundant)
     if theta * (tau ** 2) - 2 * (theta ** 2) * tau - theta ** 2 - k * theta + k * (tau ** 2) + 2 * k * tau < 0 or\
             (theta ** 2) * tau - 2 * theta * (tau ** 2) - tau ** 2 - k * tau + k * (theta ** 2) + 2 * k * theta < 0:
         return False
